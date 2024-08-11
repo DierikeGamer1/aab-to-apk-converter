@@ -2,8 +2,17 @@ from subprocess import Popen, PIPE, run
 from tempfile import TemporaryDirectory
 import os
 from zipfile import ZipFile
+import sys
 
-FILEBROWSER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
+if sys.platform == 'win32':
+    # Se estiver no Windows
+    FILEBROWSER_PATH = os.path.join(os.getenv('WINDIR', ''), 'explorer.exe')
+elif sys.platform == 'linux':
+    # Se estiver no Linux (Pop!_OS)
+    FILEBROWSER_PATH = 'xdg-open'  # Comando para abrir arquivos no Linux
+else:
+    # Para outros sistemas operacionais
+    FILEBROWSER_PATH = None
 
 
 def _convert_and_install(aab_path, keystore_path, keystore_pass, keystore_alias, install, open_in_explorer):
@@ -44,7 +53,8 @@ def _convert_and_install(aab_path, keystore_path, keystore_pass, keystore_alias,
                 my_zip_file.extractall(aab_dir_path)
 
             source = os.path.join(aab_dir_path, 'universal.apk')
-            destination = os.path.join(aab_dir_path, f"{os.path.splitext(aab_path)[0]}.apk")
+            destination = os.path.join(
+                aab_dir_path, f"{os.path.splitext(aab_path)[0]}.apk")
             if os.path.exists(destination):
                 os.remove(destination)
             os.rename(source, destination)
@@ -58,7 +68,8 @@ def _convert_and_install(aab_path, keystore_path, keystore_pass, keystore_alias,
 
 def convert_and_install(aab_path, keystore_path="", keystore_pass="", keystore_alias="", install=True,
                         open_in_explorer=False):
-    _convert_and_install(aab_path, keystore_path, keystore_pass, keystore_alias, install, open_in_explorer)
+    _convert_and_install(aab_path, keystore_path, keystore_pass,
+                         keystore_alias, install, open_in_explorer)
 
 
 def get_alias_name(keystore_path, keystore_pass):

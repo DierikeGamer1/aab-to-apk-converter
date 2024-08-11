@@ -38,7 +38,7 @@ def select_aab_file():
 
     aab_path = fd.askopenfilename(
         title='Select .aab file',
-        initialdir='/',
+        initialdir='/home/dierike/Área de Trabalho',
         filetypes=filetypes)
     if aab_path and len(aab_path) != 0:
         aab_path_input.delete(0, constants.END)
